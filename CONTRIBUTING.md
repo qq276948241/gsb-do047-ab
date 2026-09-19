@@ -11,20 +11,26 @@ git clone https://github.com/jackchuka/mdschema.git
 cd mdschema
 ```
 
-2. **Install Go** (version 1.24 or later):
+2. **Install Go** (the exact version pinned in `go.mod`, currently 1.26.5):
 
 - Download from [golang.org](https://golang.org/dl/)
 
-3. **Build the project**:
+3. **Run the full acceptance pipeline** (toolchain check, dependency lock,
+   build, tests, example check and generation against golden snapshots):
 
 ```bash
-go build -o mdschema ./cmd/mdschema
+make verify
 ```
 
-4. **Run tests and lint**:
+   On a clean machine this is the only command you need. It stops at the first
+   failing step, and a lock-file mismatch (`go.mod` vs `go.sum`) fails the
+   dependency step and names the offending dependency. If generated example
+   output changes on purpose, run `make verify-update` and commit the refreshed
+   files under `examples/golden/`.
+
+4. **Run lint** (optional, requires golangci-lint):
 
 ```bash
-go test ./...
 golangci-lint run
 ```
 

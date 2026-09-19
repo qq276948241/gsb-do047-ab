@@ -513,6 +513,31 @@ https://raw.githubusercontent.com/jackchuka/mdschema/main/schema.json
 
 ## Development
 
+### One-command acceptance (`make verify`)
+
+On a clean machine, run a single command to do everything in order:
+
+1. check the Go toolchain against the version pinned in `go.mod` (`go 1.26.5`);
+2. verify that every dependency is locked in `go.mod` / `go.sum` and download it;
+3. build the `mdschema` binary;
+4. run the full test suite;
+5. run `mdschema check` on every shipped example (README, requirements,
+   tutorial, blog-post) with its schema;
+6. run `mdschema generate` on every example schema and diff the result against
+   the golden snapshots in `examples/golden/`.
+
+```bash
+make verify
+```
+
+The pipeline stops at the first failing step - a passing build alone does not
+count as acceptance. If `go.mod` and `go.sum` disagree, step 2 fails and names
+the dependency. If generated output changes intentionally, refresh the
+snapshots with `make verify-update` (or `scripts/verify.sh --update`) and
+commit the updated files under `examples/golden/`.
+
+`make verify` runs `scripts/verify.sh`; the script works without `make` too.
+
 ### Running Tests
 
 ```bash

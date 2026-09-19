@@ -18,17 +18,14 @@ jobs:
         with:
           go-version-file: "go.mod"
 
-      - name: Download dependencies
-        run: go mod download
-
       - name: golangci-lint
         uses: golangci/golangci-lint-action@ba0d7d2ec06a0ea1cb5fa41b2e4a3ab91d21278a # v9.3.0
         with:
           version: latest
           args: --timeout=5m
 
-      - name: Run tests
-        run: go test -v ./...
+      - name: Acceptance (lock, build, tests, example check and generation)
+        run: make verify
 
       - name: Check schema.json is up to date
         run: |
