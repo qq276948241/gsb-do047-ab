@@ -15,13 +15,35 @@ cd mdschema
 
 - Download from [golang.org](https://golang.org/dl/)
 
-3. **Build the project**:
+3. **Run the one-command verification**:
 
 ```bash
-go build -o mdschema ./cmd/mdschema
+make verify
 ```
 
-4. **Run tests and lint**:
+`make verify` (or `./scripts/verify.sh` without `make`) is the only command
+needed on a clean machine. It runs the following stages in order and stops at
+the first failure:
+
+1. Locks — verifies the Go language version and every third-party dependency
+   declared in `go.mod` has a complete checksum entry in the committed
+   `go.sum`; a declaration/lock mismatch fails immediately and names the
+   dependency.
+2. `go mod download` at the exact locked versions.
+3. `go build -o mdschema ./cmd/mdschema`.
+4. `go test ./...`.
+5. `mdschema check` on every bundled example in `examples/` (internal links,
+   frontmatter, structure, etc.).
+6. `mdschema generate` on every example schema, diffed against the committed
+   golden text in `examples/generated/`.
+
+If generated example text changes, regenerate the golden files:
+
+```bash
+go run ./cmd/mdschema generate examples/blog-post.mdschema.yml -o examples/generated/blog-post.md
+```
+
+4. **Run lint separately** (optional, not part of `make verify`):
 
 ```bash
 go test ./...

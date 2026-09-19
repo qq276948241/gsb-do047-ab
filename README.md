@@ -513,6 +513,27 @@ https://raw.githubusercontent.com/jackchuka/mdschema/main/schema.json
 
 ## Development
 
+### One-command verification
+
+On a clean machine, run a single command to verify the whole repository:
+
+```bash
+make verify
+```
+
+(Without `make`, run `./scripts/verify.sh`.) The command runs each stage in
+order and stops at the first failure:
+
+1. Verifies that the Go language version and every third-party dependency
+   declared in `go.mod` are locked in `go.sum` — if a declaration and the lock
+   file disagree, installation fails immediately and names the dependency.
+2. Downloads the exact locked dependency versions (`go mod download`).
+3. Builds the `mdschema` binary.
+4. Runs all tests (`go test ./...`).
+5. Runs `mdschema check` on every bundled example in `examples/`.
+6. Runs `mdschema generate` on every example schema and compares the produced
+   text against the committed golden files in `examples/generated/`.
+
 ### Running Tests
 
 ```bash
